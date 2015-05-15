@@ -1,0 +1,31 @@
+apply plugin: 'java'
+apply plugin: 'eclipse-wtp'
+
+tasks.withType(JavaCompile) {
+   options.incremental = true
+   sourceCompatibility = '1.7'
+   targetCompatibility = '1.7'
+}
+
+repositories {
+   mavenCentral()
+   flatDir { dirs '../lib' }
+}
+
+
+dependencies {
+   compile 'org.slf4j:slf4j-api:1.7.12'
+   compile 'joda-time:joda-time:2.7'
+   compile 'com.mitchellbosecke:pebble:1.4.5'
+}
+
+
+
+
+
+
+// Gradle wrapper task
+// Only used when in need to reinstall the wrapper
+task wrapper(type: Wrapper) {
+   gradleVersion = '2.4'
+}
