@@ -20,7 +20,15 @@ public class DefaultJodaPatternNode extends AbstractRenderableNode {
 
     @Override
     public void render(PebbleTemplateImpl self, Writer writer, EvaluationContext context) throws PebbleException {
-        context.put(JodaExtension.PATTERN_REQUEST_ATTRIBUTE, value.evaluate(self, context));
+    	// evaluate and parse pattern
+    	Object evaluatedPattern = value.evaluate(self, context);
+    	if (!(evaluatedPattern instanceof String)) {
+    		throw new IllegalArgumentException("DefaultJodaPattern only supports String patterns. Actual argument was: " + (evaluatedPattern == null ? "null" : evaluatedPattern.getClass().getName()));
+    	}
+    	// if this context has another pattern, push a new scope
+    	if (context.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE) != null) context.pushScope();
+    	// put the new pattern in the context
+        context.put(JodaExtension.PATTERN_REQUEST_ATTRIBUTE, evaluatedPattern);
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.hectorlopezfernandez.pebblejodatime;
 
 import java.io.Writer;
 
+import org.joda.time.DateTimeZone;
+
 import com.mitchellbosecke.pebble.error.PebbleException;
 import com.mitchellbosecke.pebble.extension.NodeVisitor;
 import com.mitchellbosecke.pebble.node.AbstractRenderableNode;
@@ -20,7 +22,24 @@ public class DefaultJodaTimezoneNode extends AbstractRenderableNode {
 
     @Override
     public void render(PebbleTemplateImpl self, Writer writer, EvaluationContext context) throws PebbleException {
-        context.put(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE, value.evaluate(self, context));
+    	// evaluate and parse timezone
+    	Object evaluatedTimezone = value.evaluate(self, context);
+    	DateTimeZone timezone = null;
+    	if (evaluatedTimezone instanceof String) {
+    		try {
+    			timezone = DateTimeZone.forID((String) evaluatedTimezone);
+            } catch (IllegalArgumentException iae) {
+            	throw new IllegalArgumentException("DefaultJodaTimezone could not parse a timezone for the input string: " + evaluatedTimezone.toString());
+            }
+    	} else if (evaluatedTimezone instanceof DateTimeZone) {
+    		timezone = (DateTimeZone) evaluatedTimezone;
+    	} else {
+    		throw new IllegalArgumentException("DefaultJodaTimezone only supports String and DateTimeZone timezones. Actual argument was: " + (evaluatedTimezone == null ? "null" : evaluatedTimezone.getClass().getName()));
+    	}
+    	// if this context has another timezone, push a new scope
+    	if (context.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE) != null) context.pushScope();
+    	// put the new timezone in the context
+        context.put(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE, timezone);
     }
 
     @Override
