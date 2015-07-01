@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.mitchellbosecke.pebble.extension.AbstractExtension;
 import com.mitchellbosecke.pebble.extension.Filter;
+import com.mitchellbosecke.pebble.extension.Function;
 import com.mitchellbosecke.pebble.tokenParser.TokenParser;
 
 public class JodaExtension extends AbstractExtension {
@@ -16,9 +17,11 @@ public class JodaExtension extends AbstractExtension {
 	public static final String PATTERN_REQUEST_ATTRIBUTE = "joda_pattern";
 
     private final JodaFilter filter;
+    private final DateTimeFunction dateTimeFunction;
 
     public JodaExtension() {
         this.filter = new JodaFilter();
+        this.dateTimeFunction = new DateTimeFunction();
     }
 
     @Override
@@ -27,11 +30,19 @@ public class JodaExtension extends AbstractExtension {
         filters.put("joda", filter);
         return filters;
     }
+    
+    @Override
+    public Map<String, Function> getFunctions() {
+    	Map<String, Function> functions = new HashMap<>();
+    	functions.put("dateTime", dateTimeFunction);
+        return functions;
+    }
 
     @Override
     public List<TokenParser> getTokenParsers() {
         List<TokenParser> parsers = new ArrayList<>();
         parsers.add(new JodaLocaleTokenParser());
+        parsers.add(new JodaPatternTokenParser());
         parsers.add(new JodaTimezoneTokenParser());
         return parsers;
     }

@@ -1,10 +1,15 @@
 package com.hectorlopezfernandez.pebblejodatime;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import com.mitchellbosecke.pebble.error.AttributeNotFoundException;
 import com.mitchellbosecke.pebble.extension.Function;
@@ -31,7 +36,8 @@ public class DateTimeFunction implements Function {
     public Object execute(Map<String, Object> args) {
         EvaluationContext context = (EvaluationContext) args.get("_context");
 
-        // resolve timezone, it's used in both parsing and creating
+        //TODO datetime creation should take into account default timezones set with "defaultJodaTimezone"
+        // resolve timezone, it's used in both parsing and creating datetimes
         Object timezoneParam = args.get("timezone");
 		DateTimeZone timezone = null;
 		if (timezoneParam == null) {
@@ -46,12 +52,40 @@ public class DateTimeFunction implements Function {
 		 	throw new IllegalArgumentException("JodaFilter only supports String and DateTimeZone timezones. Actual argument was: " + timezoneParam.getClass().getName());
 		}
 
+		//TODO datetime creation should take into account known defaults for locale, pattern
     	// if value is null, a DateTime is created and pattern/style ignored
     	Object value = args.get("value");
+    	DateTime d = null;
     	if (value == null) {
-    		
+    		d = new DateTime();
+    		if (timezone != null) d = d.withZone(timezone);
+        } else if (value instanceof Date) {
+    		d = new DateTime((Date) value);
+    		if (timezone != null) d = d.withZone(timezone);
+        } else if (value instanceof String) {
+        	Object pattern = args.get("pattern");
+        	Object style = args.get("style");
+        	Object locale = args.get("locale");
+        	// parse string into a DateTime
+            DateTimeFormatter formatter;
+            if (pattern != null) {
+                formatter = DateTimeFormat.forPattern(pattern.toString());
+            } else if (style != null) {
+                formatter = DateTimeFormat.forStyle(style.toString());
+            } else {
+                formatter = DateTimeFormat.fullDateTime();
+            }
+            if (locale instanceof Locale) {
+                formatter = formatter.withLocale((Locale) locale);
+            } else if (locale instanceof String) {
+            	formatter = formatter.withLocale(Locale.forLanguageTag(locale.toString()));
+            }
+            if (timezone != null) {
+                formatter = formatter.withZone(timezone);
+            }
+            d = formatter.parseDateTime((String) value);
         }
-    	return null;
+    	return d;
     }
 
 	private Object getFromContext(EvaluationContext context, String key) {
