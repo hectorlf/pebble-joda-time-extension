@@ -11,7 +11,6 @@ import org.joda.time.ReadablePartial;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.mitchellbosecke.pebble.error.AttributeNotFoundException;
 import com.mitchellbosecke.pebble.extension.Filter;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
 
@@ -44,10 +43,8 @@ public class JodaFilter implements Filter {
         // pattern is preferred to style, but only if they are both specified
         // style, if specified, is preferred to default joda pattern
         if (pattern == null && style == null) {
-        	try {
-				String defaultPattern = (String) context.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE);
-				if (defaultPattern != null) pattern = defaultPattern;
-			} catch (AttributeNotFoundException e) {}
+        	String defaultPattern = (String) context.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE);
+			if (defaultPattern != null) pattern = defaultPattern;
         }
 
         // create formatter
@@ -66,11 +63,9 @@ public class JodaFilter implements Filter {
         Locale locale = null;
         if (localeParam == null) {
         	// try first the default joda locale and then resort to EvaluationContext's locale
-        	try {
-				Locale defaultLocale = (Locale) context.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE);
-				if (defaultLocale != null) locale = defaultLocale;
-				else locale = context.getLocale();
-			} catch (AttributeNotFoundException e) {}
+			Locale defaultLocale = (Locale) context.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE);
+			if (defaultLocale != null) locale = defaultLocale;
+			else locale = context.getLocale();
         } else if (localeParam instanceof String) {
             locale = Locale.forLanguageTag((String) localeParam);
         } else if (localeParam instanceof Locale) {
@@ -90,10 +85,8 @@ public class JodaFilter implements Filter {
         DateTimeZone timezone = null;
         if (timezoneParam == null) {
         	// try default joda timezone
-        	try {
-        		DateTimeZone defaultTimezone = (DateTimeZone) context.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
-        		if (defaultTimezone != null) timezone = defaultTimezone;
-			} catch (AttributeNotFoundException e) {}
+    		DateTimeZone defaultTimezone = (DateTimeZone) context.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
+    		if (defaultTimezone != null) timezone = defaultTimezone;
         } else if (timezoneParam instanceof String) {
         	timezone = DateTimeZone.forID((String) timezoneParam);
         } else if (timezoneParam instanceof DateTimeZone) {

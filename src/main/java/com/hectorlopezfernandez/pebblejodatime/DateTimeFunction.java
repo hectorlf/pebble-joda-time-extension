@@ -11,7 +11,6 @@ import org.joda.time.DateTimeZone;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import com.mitchellbosecke.pebble.error.AttributeNotFoundException;
 import com.mitchellbosecke.pebble.extension.Function;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
 
@@ -42,7 +41,7 @@ public class DateTimeFunction implements Function {
 		DateTimeZone timezone = null;
 		if (timezoneParam == null) {
 		    // try default joda timezone
-		 	DateTimeZone defaultTimezone = (DateTimeZone) getFromContext(context, JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
+		 	DateTimeZone defaultTimezone = (DateTimeZone) context.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
 		 	if (defaultTimezone != null) timezone = defaultTimezone;
 		} else if (timezoneParam instanceof String) {
 		 	timezone = DateTimeZone.forID((String) timezoneParam);
@@ -87,11 +86,5 @@ public class DateTimeFunction implements Function {
         }
     	return d;
     }
-
-	private Object getFromContext(EvaluationContext context, String key) {
-		try {
-	        return context.get(key);
-		} catch(AttributeNotFoundException anfe) { return null; }
-	}
 
 }

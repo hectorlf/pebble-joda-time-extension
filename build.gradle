@@ -15,8 +15,8 @@ repositories {
 
 dependencies {
    compile 'org.slf4j:slf4j-api:1.7.12'
-   compile 'joda-time:joda-time:2.7'
-   compile 'com.mitchellbosecke:pebble:1.4.5'
+   compile 'joda-time:joda-time:2.9.1'
+   compile 'com.mitchellbosecke:pebble:1.6.0'
 }
 
 
@@ -27,5 +27,5 @@ dependencies {
 // Gradle wrapper task
 // Only used when in need to reinstall the wrapper
 task wrapper(type: Wrapper) {
-   gradleVersion = '2.4'
+   gradleVersion = '2.9'
 }
