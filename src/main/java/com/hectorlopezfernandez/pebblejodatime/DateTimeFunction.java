@@ -13,6 +13,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.mitchellbosecke.pebble.extension.Function;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
+import com.mitchellbosecke.pebble.template.ScopeChain;
 
 public class DateTimeFunction implements Function {
 
@@ -34,6 +35,7 @@ public class DateTimeFunction implements Function {
     @Override
     public Object execute(Map<String, Object> args) {
         EvaluationContext context = (EvaluationContext) args.get("_context");
+        ScopeChain values = context.getScopeChain();
 
         //TODO datetime creation should take into account default timezones set with "defaultJodaTimezone"
         // resolve timezone, it's used in both parsing and creating datetimes
@@ -41,7 +43,7 @@ public class DateTimeFunction implements Function {
 		DateTimeZone timezone = null;
 		if (timezoneParam == null) {
 		    // try default joda timezone
-		 	DateTimeZone defaultTimezone = (DateTimeZone) context.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
+		 	DateTimeZone defaultTimezone = (DateTimeZone) values.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
 		 	if (defaultTimezone != null) timezone = defaultTimezone;
 		} else if (timezoneParam instanceof String) {
 		 	timezone = DateTimeZone.forID((String) timezoneParam);

@@ -9,6 +9,7 @@ import com.mitchellbosecke.pebble.node.AbstractRenderableNode;
 import com.mitchellbosecke.pebble.node.expression.Expression;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
+import com.mitchellbosecke.pebble.template.ScopeChain;
 
 public class DefaultJodaLocaleNode extends AbstractRenderableNode {
 
@@ -31,10 +32,11 @@ public class DefaultJodaLocaleNode extends AbstractRenderableNode {
     	} else {
     		throw new IllegalArgumentException("DefaultJodaLocale only supports String and Locale locales. Actual argument was: " + (evaluatedLocale == null ? "null" : evaluatedLocale.getClass().getName()));
     	}
+    	ScopeChain values = context.getScopeChain();
     	// if this context has another locale, push a new scope
-    	if (context.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE) != null) context.pushScope();
+    	if (values.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE) != null) values.pushScope();
     	// put the new locale in the context
-        context.put(JodaExtension.LOCALE_REQUEST_ATTRIBUTE, locale);
+    	values.put(JodaExtension.LOCALE_REQUEST_ATTRIBUTE, locale);
     }
 
     @Override

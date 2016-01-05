@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'eclipse-wtp'
+apply plugin: 'eclipse'
 
 tasks.withType(JavaCompile) {
    options.incremental = true
@@ -16,10 +16,8 @@ repositories {
 dependencies {
    compile 'org.slf4j:slf4j-api:1.7.12'
    compile 'joda-time:joda-time:2.9.1'
-   compile 'com.mitchellbosecke:pebble:1.6.0'
+   compile 'com.mitchellbosecke:pebble:2.0.0'
 }
-
-
 
 
 

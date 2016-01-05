@@ -8,6 +8,7 @@ import com.mitchellbosecke.pebble.node.AbstractRenderableNode;
 import com.mitchellbosecke.pebble.node.expression.Expression;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
+import com.mitchellbosecke.pebble.template.ScopeChain;
 
 public class DefaultJodaPatternNode extends AbstractRenderableNode {
 
@@ -25,10 +26,11 @@ public class DefaultJodaPatternNode extends AbstractRenderableNode {
     	if (!(evaluatedPattern instanceof String)) {
     		throw new IllegalArgumentException("DefaultJodaPattern only supports String patterns. Actual argument was: " + (evaluatedPattern == null ? "null" : evaluatedPattern.getClass().getName()));
     	}
+    	ScopeChain values = context.getScopeChain();
     	// if this context has another pattern, push a new scope
-    	if (context.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE) != null) context.pushScope();
+    	if (values.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE) != null) values.pushScope();
     	// put the new pattern in the context
-        context.put(JodaExtension.PATTERN_REQUEST_ATTRIBUTE, evaluatedPattern);
+    	values.put(JodaExtension.PATTERN_REQUEST_ATTRIBUTE, evaluatedPattern);
     }
 
     @Override

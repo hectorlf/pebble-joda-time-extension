@@ -10,6 +10,7 @@ import com.mitchellbosecke.pebble.node.AbstractRenderableNode;
 import com.mitchellbosecke.pebble.node.expression.Expression;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
 import com.mitchellbosecke.pebble.template.PebbleTemplateImpl;
+import com.mitchellbosecke.pebble.template.ScopeChain;
 
 public class DefaultJodaTimezoneNode extends AbstractRenderableNode {
 
@@ -36,10 +37,11 @@ public class DefaultJodaTimezoneNode extends AbstractRenderableNode {
     	} else {
     		throw new IllegalArgumentException("DefaultJodaTimezone only supports String and DateTimeZone timezones. Actual argument was: " + (evaluatedTimezone == null ? "null" : evaluatedTimezone.getClass().getName()));
     	}
+    	ScopeChain values = context.getScopeChain();
     	// if this context has another timezone, push a new scope
-    	if (context.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE) != null) context.pushScope();
+    	if (values.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE) != null) values.pushScope();
     	// put the new timezone in the context
-        context.put(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE, timezone);
+    	values.put(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE, timezone);
     }
 
     @Override

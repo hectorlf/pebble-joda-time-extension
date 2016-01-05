@@ -13,6 +13,7 @@ import org.joda.time.format.DateTimeFormatter;
 
 import com.mitchellbosecke.pebble.extension.Filter;
 import com.mitchellbosecke.pebble.template.EvaluationContext;
+import com.mitchellbosecke.pebble.template.ScopeChain;
 
 public class JodaFilter implements Filter {
 
@@ -35,15 +36,16 @@ public class JodaFilter implements Filter {
         }
         
         EvaluationContext context = (EvaluationContext) args.get("_context");
+        ScopeChain values = context.getScopeChain();
 
         // pattern param
         String pattern = (String) args.get("pattern");
         // style param
         String style = (String) args.get("style");
-        // pattern is preferred to style, but only if they are both specified
-        // style, if specified, is preferred to default joda pattern
+        // pattern is preferred to style, but only if they are both specified.
+        // style, if specified, is preferred to default joda pattern.
         if (pattern == null && style == null) {
-        	String defaultPattern = (String) context.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE);
+        	String defaultPattern = (String) values.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE);
 			if (defaultPattern != null) pattern = defaultPattern;
         }
 
@@ -63,7 +65,7 @@ public class JodaFilter implements Filter {
         Locale locale = null;
         if (localeParam == null) {
         	// try first the default joda locale and then resort to EvaluationContext's locale
-			Locale defaultLocale = (Locale) context.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE);
+			Locale defaultLocale = (Locale) values.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE);
 			if (defaultLocale != null) locale = defaultLocale;
 			else locale = context.getLocale();
         } else if (localeParam instanceof String) {
@@ -85,7 +87,7 @@ public class JodaFilter implements Filter {
         DateTimeZone timezone = null;
         if (timezoneParam == null) {
         	// try default joda timezone
-    		DateTimeZone defaultTimezone = (DateTimeZone) context.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
+    		DateTimeZone defaultTimezone = (DateTimeZone) values.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
     		if (defaultTimezone != null) timezone = defaultTimezone;
         } else if (timezoneParam instanceof String) {
         	timezone = DateTimeZone.forID((String) timezoneParam);
