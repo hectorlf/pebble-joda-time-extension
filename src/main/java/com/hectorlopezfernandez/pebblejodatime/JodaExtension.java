@@ -26,21 +26,24 @@ public class JodaExtension extends AbstractExtension {
 
     @Override
     public Map<String, Filter> getFilters() {
-        Map<String, Filter> filters = new HashMap<>();
+        Map<String, Filter> filters = new HashMap<>(2);
         filters.put("joda", filter);
         return filters;
     }
     
     @Override
     public Map<String, Function> getFunctions() {
-    	Map<String, Function> functions = new HashMap<>();
+    	Map<String, Function> functions = new HashMap<>(2);
     	functions.put("dateTime", dateTimeFunction);
         return functions;
     }
 
     @Override
     public List<TokenParser> getTokenParsers() {
-        List<TokenParser> parsers = new ArrayList<>();
+        List<TokenParser> parsers = new ArrayList<>(6);
+        parsers.add(new DefaultJodaLocaleTokenParser());
+        parsers.add(new DefaultJodaPatternTokenParser());
+        parsers.add(new DefaultJodaTimezoneTokenParser());
         parsers.add(new JodaLocaleTokenParser());
         parsers.add(new JodaPatternTokenParser());
         parsers.add(new JodaTimezoneTokenParser());

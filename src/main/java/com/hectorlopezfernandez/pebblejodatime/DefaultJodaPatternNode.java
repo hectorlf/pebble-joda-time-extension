@@ -27,9 +27,6 @@ public class DefaultJodaPatternNode extends AbstractRenderableNode {
     		throw new IllegalArgumentException("DefaultJodaPattern only supports String patterns. Actual argument was: " + (evaluatedPattern == null ? "null" : evaluatedPattern.getClass().getName()));
     	}
     	ScopeChain values = context.getScopeChain();
-    	// if this context has another pattern, push a new scope
-    	if (values.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE) != null) values.pushScope();
-    	// put the new pattern in the context
     	values.put(JodaExtension.PATTERN_REQUEST_ATTRIBUTE, evaluatedPattern);
     }
 
