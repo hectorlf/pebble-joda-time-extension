@@ -2,10 +2,8 @@ package com.hectorlopezfernandez.pebblejodatime;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
-import org.joda.time.DateTimeZone;
 import org.joda.time.ReadableInstant;
 import org.joda.time.ReadablePartial;
 import org.joda.time.format.DateTimeFormat;
@@ -38,44 +36,25 @@ public class JodaFilter implements Filter {
         EvaluationContext context = (EvaluationContext) args.get("_context");
         ScopeChain values = context.getScopeChain();
 
-        // pattern param
-        String pattern = (String) args.get("pattern");
-        // style param
-        String style = (String) args.get("style");
-        // pattern is preferred to style, but only if they are both specified.
-        // style, if specified, is preferred to default joda pattern.
-        if (pattern == null && style == null) {
-        	String defaultPattern = (String) values.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE);
-			if (defaultPattern != null) pattern = defaultPattern;
-        }
-
         // create formatter
         DateTimeFormatter formatter;
-        if (pattern != null) {
-            formatter = DateTimeFormat.forPattern(pattern);
-        } else if (style != null) {
-            formatter = DateTimeFormat.forStyle(style);
-        } else {
-            // use a medium date (no time) style by default; same as jstl
-            formatter = DateTimeFormat.mediumDate();
-        }
+        String patternParam = (String) args.get("pattern");
+        String styleParam = (String) args.get("style");
+    	// if pattern is specified, it is preferred to style; but if not specified, style is preferred to default joda pattern
+    	if (patternParam == null && styleParam != null) {
+    		formatter = DateTimeFormat.forStyle(styleParam.toString());
+    	} else {
+    		String pattern = ResolveUtils.resolvePattern(patternParam, values);
+    		if (pattern != null) {
+                formatter = DateTimeFormat.forPattern(pattern);
+            } else {
+                // use a medium date (no time) style by default; same as jstl
+                formatter = DateTimeFormat.mediumDate();
+            }
+    	}
 
         // locale param
-        Object localeParam = args.get("locale");
-        Locale locale = null;
-        if (localeParam == null) {
-        	// try first the default joda locale and then resort to EvaluationContext's locale
-			Locale defaultLocale = (Locale) values.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE);
-			if (defaultLocale != null) locale = defaultLocale;
-			else locale = context.getLocale();
-        } else if (localeParam instanceof String) {
-            locale = Locale.forLanguageTag((String) localeParam);
-        } else if (localeParam instanceof Locale) {
-        	locale = (Locale) localeParam;
-        } else {
-        	throw new IllegalArgumentException("JodaFilter only supports String and Locale locales. Actual argument was: " + localeParam.getClass().getName());
-        }
-        formatter = formatter.withLocale(locale);
+        formatter.withLocale(ResolveUtils.resolveLocale(args.get("locale"), values));
         
         // shortcircuit if no timezone can be involved
         if (inputObject instanceof ReadablePartial) {
@@ -83,22 +62,7 @@ public class JodaFilter implements Filter {
         }
 
         // timezone param
-        Object timezoneParam = args.get("timezone");
-        DateTimeZone timezone = null;
-        if (timezoneParam == null) {
-        	// try default joda timezone
-    		DateTimeZone defaultTimezone = (DateTimeZone) values.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
-    		if (defaultTimezone != null) timezone = defaultTimezone;
-        } else if (timezoneParam instanceof String) {
-        	timezone = DateTimeZone.forID((String) timezoneParam);
-        } else if (timezoneParam instanceof DateTimeZone) {
-        	timezone = (DateTimeZone) timezoneParam;
-        } else {
-        	throw new IllegalArgumentException("JodaFilter only supports String and DateTimeZone timezones. Actual argument was: " + timezoneParam.getClass().getName());
-        }
-        if (timezone != null) {
-        	formatter.withZone(timezone);
-        }
+        formatter = formatter.withZone(ResolveUtils.resolveTimezone(args.get("timezone"), values));
 
         return formatter.print((ReadableInstant) inputObject);
     }
