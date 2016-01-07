@@ -1,0 +1,1 @@
+{{ date | joda("dd/MMM/yyyy",locale) }},{{ date | joda("dd/MMM/yyyy","es") }}
