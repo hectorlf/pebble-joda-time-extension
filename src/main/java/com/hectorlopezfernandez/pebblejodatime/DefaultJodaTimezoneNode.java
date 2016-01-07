@@ -27,11 +27,7 @@ public class DefaultJodaTimezoneNode extends AbstractRenderableNode {
     	Object evaluatedTimezone = value.evaluate(self, context);
     	DateTimeZone timezone = null;
     	if (evaluatedTimezone instanceof String) {
-    		try {
-    			timezone = DateTimeZone.forID((String) evaluatedTimezone);
-            } catch (IllegalArgumentException iae) {
-            	throw new IllegalArgumentException("Couldn't parse a timezone for the input string: " + evaluatedTimezone.toString());
-            }
+   			timezone = DateTimeZone.forID((String) evaluatedTimezone);
     	} else if (evaluatedTimezone instanceof DateTimeZone) {
     		timezone = (DateTimeZone) evaluatedTimezone;
     	} else {

@@ -35,11 +35,7 @@ public class JodaTimezoneNode extends AbstractRenderableNode {
     	Object evaluatedTimezone = value.evaluate(self, context);
     	DateTimeZone timezone = null;
     	if (evaluatedTimezone instanceof String) {
-    		try {
-    			timezone = DateTimeZone.forID((String) evaluatedTimezone);
-            } catch (IllegalArgumentException iae) {
-            	throw new IllegalArgumentException("Couldn't parse a timezone for the input string: " + evaluatedTimezone.toString());
-            }
+   			timezone = DateTimeZone.forID((String) evaluatedTimezone);
     	} else if (evaluatedTimezone instanceof DateTimeZone) {
     		timezone = (DateTimeZone) evaluatedTimezone;
     	} else {
@@ -53,7 +49,6 @@ public class JodaTimezoneNode extends AbstractRenderableNode {
     	// check if scope is the same and clean it, else warn (there's nothing more we can do about it)
     	if (values.currentScopeContainsVariable(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE)) values.popScope();
     	else logger.warn("Could not clean scoped timezone {} because a child node opened a scope without closing it. The timezone will live for the rest of the current render.", timezone);
-
     }
 
     @Override
