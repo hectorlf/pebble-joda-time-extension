@@ -19,9 +19,9 @@ public class JodaFilter implements Filter {
 
     public JodaFilter() {
         argumentNames.add("pattern");
-        argumentNames.add("style");
         argumentNames.add("locale");
         argumentNames.add("timezone");
+        argumentNames.add("style");
     }
 
     public List<String> getArgumentNames() {

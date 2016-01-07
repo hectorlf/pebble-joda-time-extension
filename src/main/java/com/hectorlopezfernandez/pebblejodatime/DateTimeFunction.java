@@ -21,9 +21,9 @@ public class DateTimeFunction implements Function {
     public DateTimeFunction() {
         argumentNames.add("value");
         argumentNames.add("pattern");
-        argumentNames.add("style");
         argumentNames.add("locale");
         argumentNames.add("timezone");
+        argumentNames.add("style");
     }
 
     @Override
