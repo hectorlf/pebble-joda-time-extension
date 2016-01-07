@@ -37,56 +37,81 @@ public class DateTimeFunction implements Function {
         EvaluationContext context = (EvaluationContext) args.get("_context");
         ScopeChain values = context.getScopeChain();
 
-        //TODO datetime creation should take into account default timezones set with "defaultJodaTimezone"
         // resolve timezone, it's used in both parsing and creating datetimes
-        Object timezoneParam = args.get("timezone");
+		DateTimeZone timezone = resolveTimezone(args.get("timezone"), values);
+
+    	// process datetime
+    	Object value = args.get("value");
+    	DateTime d = null;
+    	if (value == null) {
+    		d = new DateTime(timezone);
+        } else if (value instanceof Date) {
+    		d = new DateTime((Date) value, timezone);
+        } else if (value instanceof String) {
+        	DateTimeFormatter formatter;
+        	Object patternParam = args.get("pattern");
+        	Object styleParam = args.get("style");
+        	// if pattern is specified, it is preferred to style; but if not specified, style is preferred to default joda pattern
+        	if (patternParam == null && styleParam != null) {
+        		formatter = DateTimeFormat.forStyle(styleParam.toString());
+        	} else {
+        		String pattern = resolvePattern(patternParam, values);
+        		if (pattern != null) {
+                    formatter = DateTimeFormat.forPattern(pattern);
+                } else {
+                    formatter = DateTimeFormat.fullDateTime();
+                }
+        	}
+            formatter = formatter.withLocale(resolveLocale(args.get("locale"), values));
+            formatter = formatter.withZone(timezone);
+            d = formatter.parseDateTime((String) value);
+        }
+    	return d;
+    }
+
+    private DateTimeZone resolveTimezone(Object timezoneParam, ScopeChain values) {
 		DateTimeZone timezone = null;
 		if (timezoneParam == null) {
 		    // try default joda timezone
 		 	DateTimeZone defaultTimezone = (DateTimeZone) values.get(JodaExtension.TIMEZONE_REQUEST_ATTRIBUTE);
 		 	if (defaultTimezone != null) timezone = defaultTimezone;
+		 	else timezone = DateTimeZone.getDefault();
 		} else if (timezoneParam instanceof String) {
 		 	timezone = DateTimeZone.forID((String) timezoneParam);
 		} else if (timezoneParam instanceof DateTimeZone) {
 		 	timezone = (DateTimeZone) timezoneParam;
 		} else {
-		 	throw new IllegalArgumentException("JodaFilter only supports String and DateTimeZone timezones. Actual argument was: " + timezoneParam.getClass().getName());
+		 	throw new IllegalArgumentException("DateTimeFunction only supports String and DateTimeZone timezones. Actual argument was: " + timezoneParam.getClass().getName());
 		}
+		return timezone;
+    }
 
-		//TODO datetime creation should take into account known defaults for locale, pattern
-    	// if value is null, a DateTime is created and pattern/style ignored
-    	Object value = args.get("value");
-    	DateTime d = null;
-    	if (value == null) {
-    		d = new DateTime();
-    		if (timezone != null) d = d.withZone(timezone);
-        } else if (value instanceof Date) {
-    		d = new DateTime((Date) value);
-    		if (timezone != null) d = d.withZone(timezone);
-        } else if (value instanceof String) {
-        	Object pattern = args.get("pattern");
-        	Object style = args.get("style");
-        	Object locale = args.get("locale");
-        	// parse string into a DateTime
-            DateTimeFormatter formatter;
-            if (pattern != null) {
-                formatter = DateTimeFormat.forPattern(pattern.toString());
-            } else if (style != null) {
-                formatter = DateTimeFormat.forStyle(style.toString());
-            } else {
-                formatter = DateTimeFormat.fullDateTime();
-            }
-            if (locale instanceof Locale) {
-                formatter = formatter.withLocale((Locale) locale);
-            } else if (locale instanceof String) {
-            	formatter = formatter.withLocale(Locale.forLanguageTag(locale.toString()));
-            }
-            if (timezone != null) {
-                formatter = formatter.withZone(timezone);
-            }
-            d = formatter.parseDateTime((String) value);
+    private String resolvePattern(Object patternParam, ScopeChain values) {
+    	String pattern = null;
+		if (patternParam == null) {
+		    // try default joda pattern
+		 	String defaultPattern = (String) values.get(JodaExtension.PATTERN_REQUEST_ATTRIBUTE);
+		 	if (defaultPattern != null) pattern = defaultPattern;
+		} else  {
+			pattern = patternParam.toString();
+		}
+		return pattern;
+    }
+
+    private Locale resolveLocale(Object localeParam, ScopeChain values) {
+    	Locale locale = null;
+    	if (localeParam == null) {
+		    // try default joda locale
+		 	Locale defaultLocale = (Locale) values.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE);
+		 	if (defaultLocale != null) locale = defaultLocale;
+    	} else if (localeParam instanceof Locale) {
+    		locale = (Locale)localeParam;
+        } else if (localeParam instanceof String) {
+        	locale = Locale.forLanguageTag(localeParam.toString());
+        } else {
+        	throw new IllegalArgumentException("DateTimeFunction only supports String and Locale locales. Actual argument was: " + localeParam.getClass().getName());
         }
-    	return d;
+        return locale;
     }
 
 }
