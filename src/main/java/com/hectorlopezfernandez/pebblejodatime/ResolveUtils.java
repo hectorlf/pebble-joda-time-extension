@@ -24,7 +24,7 @@ final class ResolveUtils {
 		} else if (timezoneParam instanceof DateTimeZone) {
 		 	timezone = (DateTimeZone) timezoneParam;
 		} else {
-		 	throw new IllegalArgumentException("DateTimeFunction only supports String and DateTimeZone timezones. Actual argument was: " + timezoneParam.getClass().getName());
+		 	throw new IllegalArgumentException("JodaExtension only supports String and DateTimeZone timezones. Actual argument was: " + timezoneParam.getClass().getName());
 		}
 		return timezone;
     }
@@ -52,7 +52,7 @@ final class ResolveUtils {
         } else if (localeParam instanceof String) {
         	locale = Locale.forLanguageTag(localeParam.toString());
         } else {
-        	throw new IllegalArgumentException("DateTimeFunction only supports String and Locale locales. Actual argument was: " + localeParam.getClass().getName());
+        	throw new IllegalArgumentException("JodaExtension only supports String and Locale locales. Actual argument was: " + localeParam.getClass().getName());
         }
         return locale;
     }
