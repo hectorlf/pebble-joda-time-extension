@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -62,7 +63,6 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertEquals("08/ago/0808,08/ago/0808", output);
 	}
 
@@ -76,7 +76,6 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertEquals("08/ago/0808,08/ago/0808", output);
 	}
 
@@ -89,7 +88,6 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertEquals("08-ago-0808 8:08:08,08-ago-0808 8:08:08", output);
 	}
 
@@ -100,7 +98,6 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertTrue(output.contains(String.valueOf(new DateTime().getYear())));
 	}
 	
@@ -112,7 +109,6 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertTrue(output.contains("0808"));
 	}
 
@@ -134,7 +130,6 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertTrue(output.contains("0808"));
 	}
 
@@ -148,7 +143,6 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertTrue(output.contains("0808"));
 	}
 
@@ -163,7 +157,6 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertTrue(output.contains("0808"));
 	}
 
@@ -177,8 +170,91 @@ public class JodaExtensionTests {
 		Writer writer = new StringWriter();
 		compiledTemplate.evaluate(writer, context);
 		String output = writer.toString();
-		System.out.println(output);
 		Assert.assertTrue(output.contains("0808"));
+	}
+
+	@Test
+	public void testDefaultJodaLocale() throws Exception {
+		PebbleTemplate compiledTemplate = engine.getTemplate("default-joda-locale.pebble");
+		Map<String, Object> context = new HashMap<>();
+		context.put("date", fixedEight());
+		context.put("locale", esLocale());
+		Writer writer = new StringWriter();
+		compiledTemplate.evaluate(writer, context);
+		String output = writer.toString();
+		Assert.assertEquals("08/ago/0808,08/ago/0808", output);
+	}
+
+	@Test
+	public void testDefaultJodaPattern() throws Exception {
+		PebbleTemplate compiledTemplate = engine.getTemplate("default-joda-pattern.pebble");
+		Map<String, Object> context = new HashMap<>();
+		context.put("date", fixedEight());
+		context.put("pattern", "dd/MM/yyyy");
+		Writer writer = new StringWriter();
+		compiledTemplate.evaluate(writer, context);
+		String output = writer.toString();
+		Assert.assertEquals("08/08/0808,08/08/0808", output);
+	}
+
+	@Test
+	public void testDefaultJodaTimezone() throws Exception {
+		PebbleTemplate compiledTemplate = engine.getTemplate("default-joda-tz.pebble");
+		Map<String, Object> context = new HashMap<>();
+		context.put("date", fixedEight());
+		context.put("timezone", madridTimezone());
+		Writer writer = new StringWriter();
+		compiledTemplate.evaluate(writer, context);
+		String output = writer.toString();
+		Assert.assertEquals("Europe/Madrid,Europe/Madrid", output);
+	}
+
+	@Test
+	public void testJodaLocale() throws Exception {
+		PebbleTemplate compiledTemplate = engine.getTemplate("joda-locale.pebble");
+		Map<String, Object> context = new HashMap<>();
+		context.put("date", fixedEight());
+		context.put("locale", esLocale());
+		Writer writer = new StringWriter();
+		compiledTemplate.evaluate(writer, context);
+		String output = writer.toString();
+		Assert.assertEquals("08/Aug/0808,08/ago/0808,08/ago/0808", output);
+	}
+
+	@Test
+	public void testJodaPattern() throws Exception {
+		PebbleTemplate compiledTemplate = engine.getTemplate("joda-pattern.pebble");
+		Map<String, Object> context = new HashMap<>();
+		context.put("date", fixedEight());
+		context.put("pattern", "dd/MM/yyyy");
+		Writer writer = new StringWriter();
+		compiledTemplate.evaluate(writer, context);
+		String output = writer.toString();
+		Assert.assertEquals("0808,08/08/0808,08/08/0808", output);
+	}
+
+	@Test
+	public void testJodaTimezone() throws Exception {
+		PebbleTemplate compiledTemplate = engine.getTemplate("joda-tz.pebble");
+		Map<String, Object> context = new HashMap<>();
+		context.put("date", fixedEight());
+		context.put("timezone", madridTimezone());
+		Writer writer = new StringWriter();
+		compiledTemplate.evaluate(writer, context);
+		String output = writer.toString();
+		Assert.assertEquals("UTC,Europe/Madrid,Europe/Madrid", output);
+	}
+
+	@Test
+	public void testRealWorldUsage() throws Exception {
+		PebbleTemplate compiledTemplate = engine.getTemplate("real-world-usage.pebble");
+		Map<String, Object> context = new HashMap<>();
+		context.put("date", fixedEight());
+		Writer writer = new StringWriter();
+		compiledTemplate.evaluate(writer, context);
+		String output = writer.toString();
+		String expected = "Today is " + DateTimeFormat.forPattern("dd/MM/yyyy").withLocale(esLocale()).print(new DateTime()) + ", but we're rockin' since " + DateTimeFormat.forPattern("yy").withLocale(esLocale()).print(fixedEight());
+		Assert.assertEquals(expected, output);
 	}
 
 	private DateTime fixedEight() {

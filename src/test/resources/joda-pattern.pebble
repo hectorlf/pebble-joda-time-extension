@@ -1,0 +1,1 @@
+{% defaultJodaPattern "yyyy" %}{{ date | joda }},{% jodaPattern pattern %}{{ date | joda }}{% endJodaPattern %},{% jodaPattern "dd/MM/yyyy" %}{{ date | joda }}{% endJodaPattern %}

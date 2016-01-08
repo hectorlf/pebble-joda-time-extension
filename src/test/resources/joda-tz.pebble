@@ -1,0 +1,1 @@
+{% defaultJodaTimezone "UTC" %}{{ date | joda("ZZZ") }},{% jodaTimezone timezone %}{{ date | joda("ZZZ") }}{% endJodaTimezone %},{% jodaTimezone "Europe/Madrid" %}{{ date | joda("ZZZ") }}{% endJodaTimezone %}

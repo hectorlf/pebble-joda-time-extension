@@ -1,0 +1,1 @@
+{% defaultJodaLocale "en" %}{{ date | joda("dd/MMM/yyyy") }},{% jodaLocale locale %}{{ date | joda("dd/MMM/yyyy") }}{% endJodaLocale %},{% jodaLocale "es" %}{{ date | joda("dd/MMM/yyyy") }}{% endJodaLocale %}

@@ -1,0 +1,1 @@
+{%defaultJodaLocale "es"%}{%defaultJodaPattern "dd/MM/yyyy"%}Today is {{ dateTime() | joda }}, but we're rockin' since {%jodaPattern "yy"%}{{ date | joda }}{%endJodaPattern%}
