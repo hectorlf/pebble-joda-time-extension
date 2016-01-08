@@ -9,7 +9,6 @@ tasks.withType(JavaCompile) {
 
 repositories {
    mavenCentral()
-   flatDir { dirs '../lib' }
 }
 
 
