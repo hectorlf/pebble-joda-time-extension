@@ -3,4 +3,7 @@ jdk:
   - oraclejdk7
 
 before_install:
- - chmod +x gradlew
+  - chmod +x gradlew
+
+notifications:
+  email: false
