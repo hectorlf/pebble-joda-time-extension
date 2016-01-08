@@ -4,6 +4,7 @@ import java.util.Locale;
 
 import org.joda.time.DateTimeZone;
 
+import com.mitchellbosecke.pebble.template.EvaluationContext;
 import com.mitchellbosecke.pebble.template.ScopeChain;
 
 final class ResolveUtils {
@@ -41,12 +42,13 @@ final class ResolveUtils {
 		return pattern;
     }
 
-    public static Locale resolveLocale(Object localeParam, ScopeChain values) {
+    public static Locale resolveLocale(Object localeParam, EvaluationContext context) {
     	Locale locale = null;
     	if (localeParam == null) {
-		    // try default joda locale
-		 	Locale defaultLocale = (Locale) values.get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE);
+		    // try default joda locale, and resort to pebble locale if everything fails
+		 	Locale defaultLocale = (Locale) context.getScopeChain().get(JodaExtension.LOCALE_REQUEST_ATTRIBUTE);
 		 	if (defaultLocale != null) locale = defaultLocale;
+		 	else locale = context.getLocale();
     	} else if (localeParam instanceof Locale) {
     		locale = (Locale)localeParam;
         } else if (localeParam instanceof String) {

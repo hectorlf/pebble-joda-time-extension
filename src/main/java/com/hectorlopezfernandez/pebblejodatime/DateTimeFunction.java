@@ -61,7 +61,7 @@ public class DateTimeFunction implements Function {
                     formatter = DateTimeFormat.fullDateTime();
                 }
         	}
-            formatter = formatter.withLocale(ResolveUtils.resolveLocale(args.get("locale"), values));
+            formatter = formatter.withLocale(ResolveUtils.resolveLocale(args.get("locale"), context));
             formatter = formatter.withZone(timezone);
             d = formatter.parseDateTime((String) value);
         }
