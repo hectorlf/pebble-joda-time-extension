@@ -50,7 +50,7 @@ final class ResolveUtils {
     	} else if (localeParam instanceof Locale) {
     		locale = (Locale)localeParam;
         } else if (localeParam instanceof String) {
-        	locale = Locale.forLanguageTag(localeParam.toString());
+        	locale = new Locale.Builder().setLanguageTag(localeParam.toString()).build();
         } else {
         	throw new IllegalArgumentException("JodaExtension only supports String and Locale locales. Actual argument was: " + localeParam.getClass().getName());
         }

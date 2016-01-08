@@ -27,7 +27,7 @@ public class DefaultJodaLocaleNode extends AbstractRenderableNode {
     	Object evaluatedLocale = value.evaluate(self, context);
     	Locale locale = null;
     	if (evaluatedLocale instanceof String) {
-    		locale = Locale.forLanguageTag((String) evaluatedLocale);
+    		locale = new Locale.Builder().setLanguageTag((String) evaluatedLocale).build();
     	} else if (evaluatedLocale instanceof Locale) {
     		locale = (Locale) evaluatedLocale;
     	} else {

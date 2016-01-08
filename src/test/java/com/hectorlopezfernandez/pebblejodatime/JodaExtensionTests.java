@@ -187,7 +187,7 @@ public class JodaExtensionTests {
 	}
 
 	private Locale esLocale() {
-		Locale l = Locale.forLanguageTag("es");
+		Locale l = new Locale.Builder().setLanguageTag("es").build();
 		return l;
 	}
 
