@@ -54,7 +54,7 @@ public class JodaFilter implements Filter {
     	}
 
         // locale param
-        formatter.withLocale(ResolveUtils.resolveLocale(args.get("locale"), values));
+    	formatter = formatter.withLocale(ResolveUtils.resolveLocale(args.get("locale"), values));
         
         // shortcircuit if no timezone can be involved
         if (inputObject instanceof ReadablePartial) {
