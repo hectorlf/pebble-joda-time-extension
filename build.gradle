@@ -12,6 +12,10 @@ repositories {
 }
 
 
+project.archivesBaseName = 'joda-time-extension'
+project.version = '1.0.2'
+
+
 dependencies {
    compile 'org.slf4j:slf4j-api:1.7.12'
    compile 'joda-time:joda-time:2.9.1'
@@ -29,11 +33,6 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 task javadocJar(type: Jar, dependsOn: javadoc) {
    classifier = 'javadoc'
    from javadoc.destinationDir
-}
-
-tasks.withType(Jar) {
-   baseName = 'joda-time-extension'
-   version = '1.0.2'
 }
 
 artifacts {
