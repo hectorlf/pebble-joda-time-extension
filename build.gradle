@@ -55,9 +55,9 @@ project.version = '1.0.3-SNAPSHOT'
 
 
 dependencies {
-   compile 'org.slf4j:slf4j-api:1.7.13'
-   compile 'joda-time:joda-time:2.9.2'
-   compile 'com.mitchellbosecke:pebble:2.1.0'
+   compile 'org.slf4j:slf4j-api:1.7.25'
+   compile 'joda-time:joda-time:2.9.9'
+   compile 'com.mitchellbosecke:pebble:2.4.0'
    
    testCompile 'junit:junit:4.12'
 }
