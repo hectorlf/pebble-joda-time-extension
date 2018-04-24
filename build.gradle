@@ -51,7 +51,7 @@ uploadArchives {
 
 project.group = 'com.hectorlopezfernandez.pebble'
 project.archivesBaseName = 'joda-time-extension'
-project.version = '1.0.3-SNAPSHOT'
+project.version = '1.0.3'
 
 
 dependencies {
