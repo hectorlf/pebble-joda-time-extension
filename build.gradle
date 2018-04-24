@@ -1,5 +1,7 @@
 apply plugin: 'java'
 apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'signing'
 
 tasks.withType(JavaCompile) {
    options.incremental = true
@@ -11,9 +13,45 @@ repositories {
    mavenCentral()
 }
 
+uploadArchives {
+   repositories {
+      mavenDeployer {
+         snapshotRepository(url: 'https://oss.sonatype.org/content/repositories/snapshots') {
+            authentication(userName: mavenUser, password: mavenPassword)
+         }
+         repository(url: 'https://oss.sonatype.org/service/local/staging/deploy/maven2') {
+            authentication(userName: mavenUser, password: mavenPassword)
+         }
+         
+         pom.project {
+            name "Joda Time extension for Pebble Template Engine"
+            description "Pebble Template Engine extension supporting the functionality of Joda Time's jsp tags"
+            url 'https://github.com/hectorlf/pebble-joda-time-extension'
+            licenses {
+               license {
+                  name "The MIT License (MIT)"
+                  url 'https://opensource.org/licenses/MIT'
+               }
+            }
+            scm {
+               url 'https://github.com/hectorlf/pebble-joda-time-extension'
+            }
+            developers {
+               developer {
+                  name "Hector Lopez"
+                  email 'postmaster@hectorlopezfernandez.com'
+                  url 'https://www.hectorlopezfernandez.com'
+               }
+            }
+         }
+         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+      }
+   }
+}
 
+project.group = 'com.hectorlopezfernandez.pebble'
 project.archivesBaseName = 'joda-time-extension'
-project.version = '1.0.2'
+project.version = '1.0.3-SNAPSHOT'
 
 
 dependencies {
@@ -38,4 +76,9 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 artifacts {
    archives sourcesJar
    archives javadocJar
+}
+
+signing {
+   required { gradle.taskGraph.hasTask("uploadArchives") }
+   sign configurations.archives
 }
