@@ -1,3 +1,7 @@
+env:
+  - secure: "oE2YVQUXTeu+Ra9aUayCSI/ymDwDJJ+MinZcYIJmfNR1hHYRA6PnjkfOqSe1j/t4t/4s6S0UfM07u2xDeAEk4Vhlk18/AaPSpIugIT8aGQ7+/xC+xYRLXAh3R/03POLYe9+HAxTJ5GLShFvOO6A90dqxWizSqZRaTsez4yG09EXtaopGDHLE4ez7e46v9RycPgBLlK6iM2R6BoqWWly3rX/8+HidDZh9P2HndTrH5FuIf0+VcMJ15IHLrxGTIy9FmS5wnVsv+u0Nu7ipL61fbCugBqk/pyd8GbX3qGBP3wtz06jGMn6gemIwxbsVqzjygMBGekHHDIFthDa2SQm1ImW56222EnFZ1OHUP+8TalWGR/7VUK2OpOWFn1GbUrNx4iNo/5PHeM4jCan8vy+ObPSmtNpBa/0CLlx9wqag9lHciTF9oMmvHGn+2YLxX1k8FMFdNWmX/zrWyZH0JgStUWYxJPChWtM+u3yaxOs2fYkk2egzAGjs0c2DB6OUn/wqzWAVGGE5AQhwFMuME+sW97pr+pHD2SWCXzThH99fB7iaN4m8peAqcQlDN/OEsKrBObumjJcJ5v/OXUfx1rWyP38WO+xcRBXKuk8itX/1PfLJBlY+udwq7px1nqc653JM6ZSw1GzQ+K9vWp7Yew4u1NFAFdKXh8kRs4F6WiU3ZOU="
+  - MAVEN_PASSWORD=blablabla
+
 language: java
 jdk:
   - openjdk8
@@ -10,7 +14,7 @@ before_install:
   - chmod +x gradlew
 
 after_success:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./gradlew uploadArchives; fi'
+  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./gradlew uploadArchives -PmavenUser=$MAVEN_USER -PmavenPassword=$MAVEN_PASSWORD; fi'
 
 notifications:
   email: false
