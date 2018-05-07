@@ -15,7 +15,7 @@ before_install:
   - chmod +x gradlew
 
 after_success:
-  - 'if [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./gradlew uploadArchives -PmavenUser=$MAVEN_USER -PmavenPassword=$MAVEN_PASSWORD; fi'
+  - 'if [ "$TRAVIS_BRANCH" = "master" ] && [ "$TRAVIS_PULL_REQUEST" = "false" ]; then bash ./gradlew uploadArchives -PmavenUser=$MAVEN_USER -PmavenPassword=$MAVEN_PASSWORD; fi'
 
 notifications:
   email: false
